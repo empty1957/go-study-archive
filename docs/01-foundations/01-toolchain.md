@@ -1,5 +1,7 @@
 # ツールチェーン
 
+> この章の問い: 変更が「動いた」ではなく「境界の契約を満たした」と、どのコマンドで示すか。
+
 ## module と package
 
 - **module**: `go.mod` をルートに持つバージョン管理単位。import path の接頭辞を宣言する。
@@ -39,10 +41,36 @@ go build ./cmd/taskapi # command をコンパイル
 
 Go は unused import / variable をエラーにします。エラーの最初の位置から直し、変更ごとに `go test` を回します。エディタの自動修正だけで終わらず、`go doc` で型と契約を確認してください。
 
+## 変更から証拠までの短いループ
+
+コマンドは全部を無条件に回すのではなく、知りたいことに合わせて狭い検証から広げます。
+
+| 段階 | コマンド | 分かること | 分からないこと |
+|---|---|---|---|
+| 対象を知る | `go list ./...` | build 対象の package | 実行時の正しさ |
+| 速く仮説を確認 | `go test -run TestServicePreservesNotFound ./internal/task` | 1 つの error 契約 | 他 package への影響 |
+| package 契約を確認 | `go test ./internal/task` | 対象 package の test | data race、未検査 package |
+| module 全体を確認 | `go test ./...` | 全 package の test と compile | test が通らない入力 |
+| 静的な怪しさを探す | `go vet ./...` | vet が知る誤用パターン | 一般的な仕様違反のすべて |
+| 並行アクセスを実行時検査 | `go test -race ./...` | 実行された経路の data race | 実行されなかった経路 |
+
+`go fmt`、`go test`、`go vet` は代替関係ではありません。整形、振る舞い、静的検査という別の証拠です。失敗したら、コマンド、Go version、最初の error、再現対象 package を学習ログに残します。
+
+### よくある失敗と切り分け
+
+- `no required module provides package`: import path と `go.mod` の module path を照合する。
+- `found packages x and y`: 同じ directory に異なる package 宣言が混ざっていないか確認する。
+- test が単独では通るが全体では落ちる: global state、時刻、順序、port、並行実行への依存を疑う。
+- race detector を起動できない: code が安全だと結論せず、C toolchain 不足など環境条件を記録して別環境で補う。
+
 ## 演習
 
 - `go list -deps ./cmd/taskapi` で標準ライブラリ依存を観察する。
-- `go test -run TestCreate -v ./internal/task` のように 1 テストだけ実行する。
+- `go test -run TestServicePreservesNotFound -v ./internal/task` で 1 つの境界契約だけを実行する。
+- `go test -run ExampleService_Get_errorContract -v ./internal/task` で実行可能な例を確認する。
 - `go test -count=20 ./...` で非決定的なテストがないか探す。
 - `go test -race ./...` と通常の test の違いを自分の言葉で書く。
 
+---
+
+[セクション概要](README.md) | 次: [言語の核](02-language-core.md)

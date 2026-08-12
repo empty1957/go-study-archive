@@ -5,9 +5,11 @@
 ## Go 基礎
 
 - [ ] slice の backing array 共有を test で示した。
+- [ ] 保持する slice の入力・出力で copy が必要か判断し、alias を防ぐ test を書いた。
 - [ ] value / pointer receiver の選択理由を説明した。
 - [ ] consumer 側の小さな interface と fake を作った。
 - [ ] wrapped error を `errors.Is/As` で分類した。
+- [ ] store の失敗が service の文脈を保ち、transport の応答へ変換される経路を追った。
 - [ ] `io.Reader/Writer` を使って I/O source を交換した。
 - [ ] table-driven test と fuzz test を書いた。
 
@@ -56,4 +58,3 @@
 - [ ] governance、role、promotion、conflict process を公開した。
 - [ ] 複数組織の production adopter から継続 feedback がある。
 - [ ] 自分なしで triage、release、security response が動いた。
-
