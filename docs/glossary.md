@@ -15,11 +15,15 @@
 | method set | ある型または pointer 型が持つ method の集合。interface を満たすかに影響する。 |
 | zero value | 明示初期化されていない値の既定値。すぐ使える型は扱いやすい。 |
 | slice | backing array を参照する、pointer・length・capacity 相当の descriptor。 |
+| aliasing | 複数の値が同じ memory を参照すること。一方の変更が他方から見えるため、API 境界では所有権または copy 方針が必要。 |
+| defensive copy | 呼び出し側との意図しない alias を断つため、保持する入力や返す mutable value をコピーすること。安全性と allocation cost を比較する。 |
 | rune | Unicode code point を表す `int32` の alias。文字表示単位（grapheme）とは限らない。 |
 | defer | 現在の関数終了時に呼び出しを実行する仕組み。resource cleanup に有効。 |
 | panic / recover | 通常の error return では扱わない異常な control flow と、deferred function での捕捉。 |
 | build tag | OS、architecture、feature 等で build 対象 file を選ぶ constraint。 |
 | internal package | 親の subtree 外から import できないことを Go tool が強制する package。 |
+| sentinel error | package が公開する比較可能な既知の error 値。`errors.Is` で分類できるが、公開後は API 契約になる。 |
+| error chain | `%w` や `Unwrap` で文脈付き error から原因をたどれる関係。表示文字列ではなく `errors.Is/As` で調べる。 |
 | table-driven test | 入力・期待値・名前を表にし、同じ検証を subtest で繰り返す Go で一般的な形式。 |
 | fuzzing | 生成・変異した入力で crash や invariant 違反を探索する test 手法。 |
 
@@ -59,4 +63,3 @@
 | CNCF Sandbox | 初期段階の cloud native project が ecosystem 内で育つ entry point。 |
 | CNCF Incubating | adoption と技術・community の成熟を示した段階。 |
 | CNCF Graduated | 広範な adoption、健全な governance、security と process の成熟を示す段階。 |
-

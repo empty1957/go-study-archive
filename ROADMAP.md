@@ -18,11 +18,14 @@
 
 作るもの: JSON ファイルを読み書きするタスク管理 CLI。
 
+教材内の実験: [基礎セクション](docs/01-foundations/README.md) で Task API の値の所有権、保存 interface、error chain を端から端まで追い、実行可能な例を変更する。
+
 出口条件:
 
 - zero value、slice の長さと容量、map の並行利用上の制約を説明できる。
 - error を値として扱い、`errors.Is/As` で分類できる。
 - consumer 側に小さな interface を定義し、テーブル駆動テストを書ける。
+- mutable な入力を保持・返却する API で、alias と copy cost のどちらを選ぶか説明できる。
 
 ## Phase 2: サービス開発（6〜8週）
 
@@ -116,4 +119,3 @@ Sandbox → Incubating → Graduated は学習コースの試験ではなく、�
 ## まだ説明できないこと
 ## 次の一手（1つだけ）
 ```
-
