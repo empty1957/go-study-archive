@@ -3,10 +3,12 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -24,10 +26,12 @@ func main() {
 func run(logger *slog.Logger) error {
 	store := &task.MemoryStore{}
 	service := task.NewService(store)
+	var ready atomic.Bool
+	ready.Store(true)
 
 	server := &http.Server{
 		Addr:              ":8080",
-		Handler:           task.NewHandler(service, logger),
+		Handler:           task.NewHandlerWithReadiness(service, logger, ready.Load),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      15 * time.Second,
@@ -36,27 +40,62 @@ func run(logger *slog.Logger) error {
 
 	stopCtx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	logger.Info("server listening", "address", server.Addr)
+	return serveHTTP(stopCtx, logger, server, 10*time.Second, func() {
+		ready.Store(false)
+	})
+}
 
+type managedServer interface {
+	ListenAndServe() error
+	Shutdown(context.Context) error
+	Close() error
+}
+
+func serveHTTP(ctx context.Context, logger *slog.Logger, server managedServer, shutdownTimeout time.Duration, beforeShutdown func()) error {
 	serveErr := make(chan error, 1)
 	go func() {
-		logger.Info("server listening", "address", server.Addr)
 		serveErr <- server.ListenAndServe()
 	}()
 
 	select {
 	case err := <-serveErr:
-		if errors.Is(err, http.ErrServerClosed) {
-			return nil
-		}
-		return err
-	case <-stopCtx.Done():
+		return normalizeServeError(err)
+	case <-ctx.Done():
 		logger.Info("shutdown requested")
 	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		return err
+	if beforeShutdown != nil {
+		beforeShutdown()
 	}
-	return nil
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+	defer cancel()
+	shutdownErr := server.Shutdown(shutdownCtx)
+	if shutdownErr != nil {
+		closeErr := server.Close()
+		return errors.Join(
+			fmt.Errorf("graceful shutdown: %w", shutdownErr),
+			wrapError("force close server", closeErr),
+			normalizeServeError(<-serveErr),
+		)
+	}
+
+	// CancelFunc only broadcasts a signal. Receiving the server result is the
+	// join that proves the owner goroutine has actually stopped.
+	return normalizeServeError(<-serveErr)
+}
+
+func normalizeServeError(err error) error {
+	if err == nil || errors.Is(err, http.ErrServerClosed) {
+		return nil
+	}
+	return fmt.Errorf("serve HTTP: %w", err)
+}
+
+func wrapError(message string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%s: %w", message, err)
 }

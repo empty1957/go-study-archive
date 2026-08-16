@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 )
 
@@ -72,6 +73,27 @@ func TestHandlerNotFound(t *testing.T) {
 	if response.Code != http.StatusNotFound {
 		t.Fatalf("status = %d, want %d", response.Code, http.StatusNotFound)
 	}
+}
+
+func TestHandlerReadinessCanDrainWithoutFailingLiveness(t *testing.T) {
+	var ready atomic.Bool
+	ready.Store(true)
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	handler := NewHandlerWithReadiness(NewService(&MemoryStore{}), logger, ready.Load)
+
+	assertStatus := func(path string, want int) {
+		t.Helper()
+		response := httptest.NewRecorder()
+		handler.ServeHTTP(response, httptest.NewRequest(http.MethodGet, path, nil))
+		if response.Code != want {
+			t.Fatalf("GET %s status = %d, want %d; body=%s", path, response.Code, want, response.Body.String())
+		}
+	}
+
+	assertStatus("/readyz", http.StatusOK)
+	ready.Store(false)
+	assertStatus("/readyz", http.StatusServiceUnavailable)
+	assertStatus("/healthz", http.StatusOK)
 }
 
 func newTestHandler() http.Handler {

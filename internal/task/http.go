@@ -16,16 +16,27 @@ const maxRequestBody = 16 << 10 // 16 KiB
 type Handler struct {
 	service *Service
 	logger  *slog.Logger
+	ready   func() bool
 }
 
 func NewHandler(service *Service, logger *slog.Logger) http.Handler {
+	return NewHandlerWithReadiness(service, logger, func() bool { return true })
+}
+
+// NewHandlerWithReadiness lets the process lifecycle remove this handler from
+// service before graceful shutdown begins. ready must be safe for concurrent
+// use because each request runs in its own goroutine.
+func NewHandlerWithReadiness(service *Service, logger *slog.Logger, ready func() bool) http.Handler {
 	if logger == nil {
 		logger = slog.Default()
 	}
-	h := &Handler{service: service, logger: logger}
+	if ready == nil {
+		ready = func() bool { return true }
+	}
+	h := &Handler{service: service, logger: logger, ready: ready}
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", h.health)
-	mux.HandleFunc("GET /readyz", h.health)
+	mux.HandleFunc("GET /readyz", h.readiness)
 	mux.HandleFunc("GET /v1/tasks", h.list)
 	mux.HandleFunc("POST /v1/tasks", h.create)
 	mux.HandleFunc("GET /v1/tasks/{id}", h.get)
@@ -51,6 +62,14 @@ func responseFromTask(item Task) taskResponse {
 
 func (h *Handler) health(w http.ResponseWriter, _ *http.Request) {
 	h.writeJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+}
+
+func (h *Handler) readiness(w http.ResponseWriter, _ *http.Request) {
+	if !h.ready() {
+		h.writeError(w, http.StatusServiceUnavailable, "not_ready", "service is not ready")
+		return
+	}
+	h.writeJSON(w, http.StatusOK, map[string]string{"status": "ready"})
 }
 
 func (h *Handler) create(w http.ResponseWriter, r *http.Request) {

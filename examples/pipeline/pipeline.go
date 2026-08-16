@@ -7,8 +7,12 @@ import (
 )
 
 // Map applies fn with at most workers concurrent calls. Output order is not
-// guaranteed. Cancellation stops producers and workers without blocked sends.
-func Map[I, O any](ctx context.Context, workers int, input []I, fn func(I) O) <-chan O {
+// guaranteed. fn must observe ctx when it performs blocking work.
+//
+// The caller owns cancellation: if it stops receiving before results is
+// closed, it must cancel ctx. Map owns and closes its internal channels, and
+// the goroutine that waits for all workers is the only closer of results.
+func Map[I, O any](ctx context.Context, workers int, input []I, fn func(context.Context, I) O) <-chan O {
 	if workers < 1 {
 		workers = 1
 	}
@@ -32,7 +36,7 @@ func Map[I, O any](ctx context.Context, workers int, input []I, fn func(I) O) <-
 		go func() {
 			defer group.Done()
 			for value := range jobs {
-				result := fn(value)
+				result := fn(ctx, value)
 				select {
 				case results <- result:
 				case <-ctx.Done():

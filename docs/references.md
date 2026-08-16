@@ -1,6 +1,6 @@
 # 参考資料
 
-変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-06）。
+変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-16）。
 
 ## Go
 
@@ -12,6 +12,9 @@
 - [Go Blog: Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors): error wrapping と `errors.Is/As` の設計背景。
 - [`errors` package documentation](https://pkg.go.dev/errors): error tree、`Is`、`As`、`Unwrap` の現在の契約。
 - [Go Blog: Pipelines and cancellation](https://go.dev/blog/pipelines): pipeline と cancellation の基本。
+- [`context` package documentation](https://pkg.go.dev/context): cancel の伝播、`CancelFunc`、deadline の現在の契約。
+- [`net/http.Server` package documentation](https://pkg.go.dev/net/http#Server): `Serve`、`Shutdown`、`Close` の終了契約。
+- [Data Race Detector](https://go.dev/doc/articles/race_detector): 実行方法、検出範囲、platform 要件。
 - [Go Blog: Fuzzing](https://go.dev/doc/tutorial/fuzz): native fuzzing の入口。
 - [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments): review で頻出する idiom。
 

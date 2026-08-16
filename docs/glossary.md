@@ -9,6 +9,8 @@
 | goroutine | Go runtime が多重化する軽量な実行単位。安価でも寿命管理は必要。 |
 | channel | goroutine 間で値を送受信し、同期も行う typed conduit。queue の万能代替ではない。 |
 | context | request scope の deadline、cancel signal、限定的 metadata を伝播する契約。optional parameter bag ではない。 |
+| cancellation | 処理へ停止を要求する協調的な signal。停止完了そのものではなく、対象が signal を観測して return した後に join が必要。 |
+| join | 開始した goroutine や処理の終了を owner が待ち、結果や error を回収すること。channel receive や `WaitGroup.Wait` などで表す。 |
 | data race | 同じ memory に並行アクセスし、少なくとも一方が write で同期がない状態。結果の論理的競合（race condition）とは区別する。 |
 | escape analysis | 値を stack に置けるか heap に逃がすかを compiler が解析すること。最適化前に計測する。 |
 | interface | method set による振る舞いの契約。実装宣言を要求しない structural typing。 |
@@ -56,6 +58,7 @@
 | RED | Rate、Errors、Duration を service ごとに見る監視方法。 |
 | USE | Utilization、Saturation、Errors を resource ごとに見る監視方法。 |
 | cardinality | metric label の組み合わせ数。無制限な user ID 等は TSDB の負荷を急増させる。 |
+| graceful shutdown | 新規 traffic を止め、有限 deadline 内で in-flight work を完了させてから終了する手順。deadline 超過時の強制終了方針も必要。 |
 | SBOM | software を構成する component と version の一覧。脆弱性影響調査に使う。 |
 | provenance | artifact がどの source と build process から生成されたかを示す情報。 |
 | maintainer | project の方向性と統合品質に責任を持つ役割。単なる commit 権限ではない。 |
