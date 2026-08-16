@@ -61,6 +61,23 @@ func FuzzParse(f *testing.F) {
 
 time、random、network を直接呼ぶと test が遅く不安定になります。ただし何でも interface にせず、clock/function injection や local test server (`httptest`) の最小境界を使います。最終的には real clock/network の integration test も必要です。
 
+## lifecycle test は順序を固定する
+
+並行処理の test では wall-clock の sleep より、channel や fake の method call を同期点にします。[`cmd/taskapi/main_test.go`](../../cmd/taskapi/main_test.go) は次の順序を固定しています。
+
+```text
+cancel
+  -> readiness=false
+  -> Shutdown が呼ばれる
+  -> Serve はまだ停止していないので owner は返らない
+  -> Serve の終了を許可
+  -> owner が result を受信して返る
+```
+
+この test は「eventually 終わる」だけでなく「resource owner が join より先に返らない」という invariant を検証します。timeout は成功を待つためではなく、bug 時に test suite 自体が永久停止しないための最後の guard として使います。
+
+[`examples/pipeline/pipeline_test.go`](../../examples/pipeline/pipeline_test.go) では callback が cancel を観測した event と、全 worker の join 後に output が閉じた event を別々に検証します。`go test -race` はこの順序の test を補完しますが、goroutine leak や論理的な順序違反をすべて検出するものではありません。
+
 ## 良い coverage の問い
 
 coverage 80% は目的ではありません。次を確認します。
@@ -71,4 +88,3 @@ coverage 80% は目的ではありません。次を確認します。
 - partial write / malformed response を扱えるか。
 - version N と N+1 は相互運用できるか。
 - test 自体が意図どおり失敗することを一度確認したか。
-

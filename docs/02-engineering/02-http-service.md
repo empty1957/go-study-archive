@@ -42,7 +42,10 @@ middleware は横断的関心事に限定します。request ID、authentication
 - `/readyz`（readiness）: 現在 traffic を安全に処理できるか。起動中、drain 中、必須依存が使えない場合は false。
 - startup probe: 初期化が長い application の起動猶予。
 
+本教材では [`NewHandlerWithReadiness`](../../internal/task/http.go) が `/healthz` と `/readyz` を分離します。停止要求を受けた [`cmd/taskapi`](../../cmd/taskapi/main.go) は readiness だけを `503 Service Unavailable` に変えてから `Shutdown` を始めます。これにより process は生きたまま新規 traffic を外し、in-flight request を drain できます。停止の owner、deadline、join の全経路は [並行処理と context](01-concurrency-context.md#実行例-2-http-server-を-drain-して-join-する)で追います。
+
+load balancer や Kubernetes が readiness の変化を各 endpoint へ反映するまでには遅延があります。application 内で readiness を落とすだけで「以後 request は絶対に来ない」と仮定せず、platform の propagation と termination grace period も設計対象にします。
+
 ## production への追加課題
 
 本教材の API は学習用で、次は意図的に省いています: 認証・認可、永続 DB、rate limit、TLS、metrics/tracing、pagination、request ID、OpenAPI、distributed deployment。これらを 1 つずつ追加し、各変更に failure test を付けるのが Phase 2〜3 の演習です。
-

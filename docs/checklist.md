@@ -20,7 +20,8 @@
 - [ ] worker concurrency と queue に上限を設けた。
 - [ ] `go test -race` で意図的な race を検出し、修正した。
 - [ ] deadline と caller cancellation を伝播した。
-- [ ] shutdown 中の in-flight request / work を test した。
+- [ ] cancel が通知であって完了ではないことを、cancel 後の join test で示した。
+- [ ] shutdown 中に readiness を落とし、in-flight request / work の完了と期限超過を test した。
 
 ## Service / Production
 
