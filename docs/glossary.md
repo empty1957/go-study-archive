@@ -59,6 +59,9 @@
 | USE | Utilization、Saturation、Errors を resource ごとに見る監視方法。 |
 | cardinality | metric label の組み合わせ数。無制限な user ID 等は TSDB の負荷を急増させる。 |
 | graceful shutdown | 新規 traffic を止め、有限 deadline 内で in-flight work を完了させてから終了する手順。deadline 超過時の強制終了方針も必要。 |
+| EndpointSlice | Service の backend endpoint と `ready`、`serving`、`terminating` などの condition を表す API。Pod 削除時の traffic drain を観測する境界。 |
+| termination grace period | kubelet が Pod の graceful termination に与える総時間。`preStop` と process 終了の両方が消費し、満了後は強制終了される。 |
+| routing propagation | readiness や endpoint の変更が proxy、load balancer、client の経路選択へ反映されるまでの伝播。同期的・瞬時とは限らない。 |
 | SBOM | software を構成する component と version の一覧。脆弱性影響調査に使う。 |
 | provenance | artifact がどの source と build process から生成されたかを示す情報。 |
 | maintainer | project の方向性と統合品質に責任を持つ役割。単なる commit 権限ではない。 |

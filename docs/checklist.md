@@ -32,6 +32,9 @@
 - [ ] SLI/SLO と burn-rate alert を定義した。
 - [ ] pprof で bottleneck を特定し、benchmark で改善を証明した。
 - [ ] backup から別環境へ restore した。
+- [ ] Pod grace period を preStop・routing propagation・application shutdown・安全余白へ分解した。
+- [ ] rollout 中の EndpointSlice condition、readiness、in-flight request、終了 log を一つの timeline で確認した。
+- [ ] 猶予不足を注入し、forced close と client impact を再現してから予算を修正した。
 
 ## 分散システム
 
