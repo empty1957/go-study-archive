@@ -49,6 +49,8 @@
 
 作るもの: コンテナ化した API、worker、PostgreSQL、メトリクス、ダッシュボード。
 
+教材内の実験: [Pod の終了契約](docs/03-cloud-native/01-containers-kubernetes.md#終了時間を予算化する)で readiness、EndpointSlice、routing propagation、Go の `Shutdown`、grace period を一つの時間予算として検証する。
+
 出口条件:
 
 - SLO と error budget を定義し、アラートを症状ベースで設計できる。

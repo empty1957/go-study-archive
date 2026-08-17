@@ -53,6 +53,8 @@ curl -i http://localhost:8080/v1/tasks
 
 Windows PowerShell では `curl.exe` を使うと同じ例を実行できます。
 
+Kubernetes など routing 変更の反映待ちを再現する場合は、`TASKAPI_ROUTING_DRAIN_DELAY=5s`（PowerShell は `$env:TASKAPI_ROUTING_DRAIN_DELAY = '5s'`）を設定します。この待機を含む shutdown の設計と実験は [Pod の終了契約](docs/03-cloud-native/01-containers-kubernetes.md#pod-削除で並行して起きること)で扱います。
+
 ## 学び方のルール
 
 - 写経で終えず、必ず入力・失敗・キャンセルの条件を変える。
