@@ -54,6 +54,9 @@
 ## OSS / Community
 
 - [ ] 実在 OSS の 1 request path と failure test を読解した。
+- [ ] 読んだ source の release tag と commit SHA を記録し、後日同じ根拠を再現できる。
+- [ ] 複数 process の処理を直列 call graph にせず、owner・watch/queue・state transition を図示した。
+- [ ] unit / controller / integration / live の各 evidence が証明しない範囲を説明した。
 - [ ] upstream に再現 test または小さな修正を contribution した。
 - [ ] 他者の PR を建設的に review した。
 - [ ] governance、role、promotion、conflict process を公開した。

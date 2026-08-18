@@ -71,6 +71,8 @@
 
 学ぶこと: issue triage、design proposal、code review、release note、互換性、community governance。
 
+教材内の実験: [Kubernetes の repository guide](docs/04-repository-guides/kubernetes.md)で Pod 削除を題材に、固定した release の source、owner、非同期境界、unit/controller test、cluster 観測を一つの evidence chain にする。
+
 進め方:
 
 1. ドキュメントまたは再現テストの修正
@@ -81,6 +83,8 @@
 
 出口条件:
 
+- user-visible な invariant から source と test を逆引きし、tag / commit SHA 付きの読解ノートを作れる。
+- unit test が証明することと、integration test / live observation が必要な仮説を分けられる。
 - 複数の upstream 変更を完了し、他者の変更をレビューできる。
 - project の contribution guide と意思決定過程に沿って提案できる。
 - 自分以外の contributor が成功するためのドキュメントを改善できる。
