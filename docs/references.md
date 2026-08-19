@@ -26,6 +26,8 @@
 - [Open Container Initiative Specs](https://github.com/opencontainers): image/runtime/distribution の仕様。
 - [OpenTelemetry specification](https://opentelemetry.io/docs/specs/): telemetry API と data model。
 - [Prometheus documentation](https://prometheus.io/docs/introduction/overview/): metrics と monitoring model。
+- [Google SRE Workbook: Canarying Releases](https://sre.google/workbook/canarying-releases/): 小さな candidate、control、評価 window、判定 automation を使う段階 release。
+- [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/): rolling update、進行状態、revision と rollback の対象範囲。
 - [SLSA specification](https://slsa.dev/spec/): software artifact supply-chain integrity。
 
 ## 読解対象の一次情報

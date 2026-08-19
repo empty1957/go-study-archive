@@ -32,6 +32,8 @@
 - [ ] SLI/SLO と burn-rate alert を定義した。
 - [ ] pprof で bottleneck を特定し、benchmark で改善を証明した。
 - [ ] backup から別環境へ restore した。
+- [ ] artifact、観測 window、最小 sample、promote / hold / rollback 閾値を release 前に固定した。
+- [ ] binary rollback で戻らない schema / data / external side effect の復旧手順を演習した。
 
 ## 分散システム
 
