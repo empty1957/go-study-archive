@@ -89,10 +89,13 @@
 
 [capstone](docs/05-projects/capstone.md) を参照し、狭く重要な問題から始めます。
 
+教材内の実験: [段階別 project](docs/05-projects/README.md) の release evidence packet を使い、同じ artifact と観測 window に対して `Promote / Hold / Rollback` を判定する。少数 sample は成功扱いせず、安全 invariant の違反は sample 数を待たず停止する。
+
 出口条件:
 
 - 明確な problem statement と非目標がある。
 - API compatibility、security、observability、upgrade、backup の方針がある。
+- rollout 前に閾値と復旧操作を固定し、判断結果を test / drill / 観測 link で説明できる。
 - 実利用者から学ぶ公開フィードバックループがある。
 - 1 社・1 人に依存しない maintainer / reviewer の経路がある。
 
