@@ -4,7 +4,7 @@
 
 JSON file に task を保存する CLI。追加、一覧、完了、削除、import/export を実装します。
 
-重点: package、I/O、error、atomic file replacement、table test、CLI contract。
+重点: package、I/O、error、[atomic file replacement と中断時の invariant](../01-foundations/05-atomic-file-replacement.md)、table test、CLI contract。
 
 ## Project B: Task service（Phase 2）
 
