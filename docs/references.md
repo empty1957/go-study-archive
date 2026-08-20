@@ -1,6 +1,6 @@
 # 参考資料
 
-変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-16）。
+変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-20）。
 
 ## Go
 
@@ -14,6 +14,10 @@
 - [Go Blog: Pipelines and cancellation](https://go.dev/blog/pipelines): pipeline と cancellation の基本。
 - [`context` package documentation](https://pkg.go.dev/context): cancel の伝播、`CancelFunc`、deadline の現在の契約。
 - [`net/http.Server` package documentation](https://pkg.go.dev/net/http#Server): `Serve`、`Shutdown`、`Close` の終了契約。
+- [`os` package documentation](https://pkg.go.dev/os): `CreateTemp`、`File.Sync`、`Rename` と OS ごとの差。特に non-Unix の rename は atomic と保証されない。
+- [POSIX `rename`](https://pubs.opengroup.org/onlinepubs/9799919799/functions/rename.html): Unix の rename 中に既存名が旧版か新版を指すという可視性の契約。
+- [POSIX rationale: directory operations](https://pubs.opengroup.org/onlinepubs/9799919799/xrat/V4_xbd_chap01.html): atomicity と durability の区別、temp file の sync・rename・directory sync の順序。
+- [Windows `ReplaceFile`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-replacefilew): Windows 固有の file replacement API。標準ライブラリだけで要件を満たせない場合の一次資料。
 - [Data Race Detector](https://go.dev/doc/articles/race_detector): 実行方法、検出範囲、platform 要件。
 - [Go Blog: Fuzzing](https://go.dev/doc/tutorial/fuzz): native fuzzing の入口。
 - [Go Code Review Comments](https://go.dev/wiki/CodeReviewComments): review で頻出する idiom。

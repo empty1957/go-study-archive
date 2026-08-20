@@ -26,6 +26,8 @@
 | internal package | 親の subtree 外から import できないことを Go tool が強制する package。 |
 | sentinel error | package が公開する比較可能な既知の error 値。`errors.Is` で分類できるが、公開後は API 契約になる。 |
 | error chain | `%w` や `Unwrap` で文脈付き error から原因をたどれる関係。表示文字列ではなく `errors.Is/As` で調べる。 |
+| commit point | 更新が未反映から反映済みへ切り替わる境界。file replacement では rename を候補にできるが、atomicity と durability は OS / filesystem の契約を別に確認する。 |
+| durability | 成功応答後に process や machine が停止しても、commit 済みの変更が失われない性質。reader への atomic な可視性とは別の保証。 |
 | table-driven test | 入力・期待値・名前を表にし、同じ検証を subtest で繰り返す Go で一般的な形式。 |
 | fuzzing | 生成・変異した入力で crash や invariant 違反を探索する test 手法。 |
 
