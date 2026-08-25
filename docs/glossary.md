@@ -47,6 +47,9 @@
 | thundering herd | 同じ event を契機に多数の処理が一斉起動し、resource を圧迫する現象。jitter が緩和に有効。 |
 | reconciliation | desired state と observed state の差を繰り返し埋め、収束させる処理。controller の基本。 |
 | at-least-once | message を失わない代わりに重複し得る配送。consumer の冪等性が必要。 |
+| informer cache | API の list/watch をもとに object の local snapshot と event を提供する cache。読み取り負荷を下げるが、API server の最新状態との一時的なずれを前提にする。 |
+| workqueue | controller が reconcile 対象の key を蓄え、重複抑制・retry・rate limit を行う queue。event 発生と処理完了の同期 barrier ではない。 |
+| semantic diff | resourceVersion や timestamp などの機械的な差ではなく、その controller の出力を変える意味のある差だけを判定すること。不要な reconcile を減らす一方、判定漏れは収束を壊す。 |
 
 ## 運用・CNCF
 
