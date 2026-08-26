@@ -1,6 +1,6 @@
 # 参考資料
 
-変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-20）。
+変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-26）。
 
 ## Go
 
@@ -14,6 +14,8 @@
 - [Go Blog: Pipelines and cancellation](https://go.dev/blog/pipelines): pipeline と cancellation の基本。
 - [`context` package documentation](https://pkg.go.dev/context): cancel の伝播、`CancelFunc`、deadline の現在の契約。
 - [`net/http.Server` package documentation](https://pkg.go.dev/net/http#Server): `Serve`、`Shutdown`、`Close` の終了契約。
+- [`http.MaxBytesReader` / `MaxBytesError`](https://pkg.go.dev/net/http#MaxBytesReader): request body の実測上限と、上限超過 error を transport response へ分類する根拠。
+- [RFC 9110: `Retry-After`](https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.3) と [`503 Service Unavailable`](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.6.4): 一時的な overload と再試行までの待機を表す HTTP semantics。
 - [`os` package documentation](https://pkg.go.dev/os): `CreateTemp`、`File.Sync`、`Rename` と OS ごとの差。特に non-Unix の rename は atomic と保証されない。
 - [POSIX `rename`](https://pubs.opengroup.org/onlinepubs/9799919799/functions/rename.html): Unix の rename 中に既存名が旧版か新版を指すという可視性の契約。
 - [POSIX rationale: directory operations](https://pubs.opengroup.org/onlinepubs/9799919799/xrat/V4_xbd_chap01.html): atomicity と durability の区別、temp file の sync・rename・directory sync の順序。

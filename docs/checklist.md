@@ -27,7 +27,9 @@
 
 ## Service / Production
 
-- [ ] input size と resource consumption を制限した。
+- [ ] 既知長と streaming body の両方で input byte 上限を強制し、`400 / 413 / 415` を caller の修復操作へ対応付けた。
+- [ ] 同時処理数と queue の予算を固定し、capacity 超過時に新規 work が始まらないことを event test で示した。
+- [ ] overload response の `Retry-After`、jitter、総 retry budget、非冪等 request の安全範囲を説明した。
 - [ ] authentication と resource-level authorization を実装した。
 - [ ] schema/API の後方互換 migration を実演した。
 - [ ] RED metrics、structured logs、trace を関連付けた。
