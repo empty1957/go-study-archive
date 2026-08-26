@@ -34,6 +34,9 @@
 - [ ] backup から別環境へ restore した。
 - [ ] artifact、観測 window、最小 sample、promote / hold / rollback 閾値を release 前に固定した。
 - [ ] binary rollback で戻らない schema / data / external side effect の復旧手順を演習した。
+- [ ] Pod grace period を preStop・routing propagation・application shutdown・安全余白へ分解した。
+- [ ] rollout 中の EndpointSlice condition、readiness、in-flight request、終了 log を一つの timeline で確認した。
+- [ ] 猶予不足を注入し、forced close と client impact を再現してから予算を修正した。
 
 ## 分散システム
 
@@ -56,6 +59,9 @@
 ## OSS / Community
 
 - [ ] 実在 OSS の 1 request path と failure test を読解した。
+- [ ] 読んだ source の release tag と commit SHA を記録し、後日同じ根拠を再現できる。
+- [ ] 複数 process の処理を直列 call graph にせず、owner・watch/queue・state transition を図示した。
+- [ ] unit / controller / integration / live の各 evidence が証明しない範囲を説明した。
 - [ ] upstream に再現 test または小さな修正を contribution した。
 - [ ] 他者の PR を建設的に review した。
 - [ ] governance、role、promotion、conflict process を公開した。
