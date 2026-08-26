@@ -49,6 +49,9 @@
 | thundering herd | 同じ event を契機に多数の処理が一斉起動し、resource を圧迫する現象。jitter が緩和に有効。 |
 | reconciliation | desired state と observed state の差を繰り返し埋め、収束させる処理。controller の基本。 |
 | at-least-once | message を失わない代わりに重複し得る配送。consumer の冪等性が必要。 |
+| informer cache | API の list/watch をもとに object の local snapshot と event を提供する cache。読み取り負荷を下げるが、API server の最新状態との一時的なずれを前提にする。 |
+| workqueue | controller が reconcile 対象の key を蓄え、重複抑制・retry・rate limit を行う queue。event 発生と処理完了の同期 barrier ではない。 |
+| semantic diff | resourceVersion や timestamp などの機械的な差ではなく、その controller の出力を変える意味のある差だけを判定すること。不要な reconcile を減らす一方、判定漏れは収束を壊す。 |
 
 ## 運用・CNCF
 
@@ -61,6 +64,12 @@
 | USE | Utilization、Saturation、Errors を resource ごとに見る監視方法。 |
 | cardinality | metric label の組み合わせ数。無制限な user ID 等は TSDB の負荷を急増させる。 |
 | graceful shutdown | 新規 traffic を止め、有限 deadline 内で in-flight work を完了させてから終了する手順。deadline 超過時の強制終了方針も必要。 |
+| canary release | 変更を production の一部へ時間限定で公開し、candidate と control の signal から全体 rollout の可否を判断する手法。少数 sample の成功だけでは promote しない。 |
+| release gate | artifact、前提条件、観測 window、閾値を入力に、promote / hold / rollback など次の操作を決める判定契約。閾値は観測後に都合よく変えない。 |
+| rollback | 既知の version へ traffic や実行物を戻す復旧操作。binary の revision を戻しても schema、data、外部 side effect は自動では戻らない。 |
+| EndpointSlice | Service の backend endpoint と `ready`、`serving`、`terminating` などの condition を表す API。Pod 削除時の traffic drain を観測する境界。 |
+| termination grace period | kubelet が Pod の graceful termination に与える総時間。`preStop` と process 終了の両方が消費し、満了後は強制終了される。 |
+| routing propagation | readiness や endpoint の変更が proxy、load balancer、client の経路選択へ反映されるまでの伝播。同期的・瞬時とは限らない。 |
 | SBOM | software を構成する component と version の一覧。脆弱性影響調査に使う。 |
 | provenance | artifact がどの source と build process から生成されたかを示す情報。 |
 | maintainer | project の方向性と統合品質に責任を持つ役割。単なる commit 権限ではない。 |

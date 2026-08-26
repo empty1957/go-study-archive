@@ -31,7 +31,18 @@ minimum dashboard:
 - dependency latency / error / retry。
 - build version と rollout marker。
 
+## termination を観測する
+
+graceful shutdown は「error が出なかった」だけでは検証できません。[Pod の終了契約](01-containers-kubernetes.md#pod-削除で並行して起きること)に沿って、少なくとも次を同じ rollout timeline へ載せます。
+
+- termination signal の受信数と時刻。
+- readiness が false になった時刻と EndpointSlice condition の変化。
+- routing propagation 待機時間、shutdown 開始・完了時間。
+- shutdown 開始時の in-flight request 数と、完了・cancel・deadline 超過の内訳。
+- forced close / `SIGKILL`、再送、重複 side effect、client error の有無。
+
+Pod が消えるまでの時間だけを短くすると、利用者側の retry や tail latency へ失敗を移すことがあります。rollout marker と request の RED、termination duration を関連付け、通常時と rollout 時の SLI を比較します。Pod UID や request ID は log / trace には有用ですが、無制限な metric label にはしません。
+
 ## runbook と incident
 
 alert には owner、impact、確認 query、safe mitigation、escalation、関連 dashboard を付けます。incident 後は個人を責めず、検知・設計・process の改善と owner / deadline を記録します。同じ failure を自動 test に変換することが最も強い学習です。
-

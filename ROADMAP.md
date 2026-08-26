@@ -50,6 +50,8 @@
 
 作るもの: コンテナ化した API、worker、PostgreSQL、メトリクス、ダッシュボード。
 
+教材内の実験: [Pod の終了契約](docs/03-cloud-native/01-containers-kubernetes.md#終了時間を予算化する)で readiness、EndpointSlice、routing propagation、Go の `Shutdown`、grace period を一つの時間予算として検証する。
+
 出口条件:
 
 - SLO と error budget を定義し、アラートを症状ベースで設計できる。
@@ -72,6 +74,8 @@
 
 学ぶこと: issue triage、design proposal、code review、release note、互換性、community governance。
 
+教材内の実験: [Kubernetes の repository guide](docs/04-repository-guides/kubernetes.md)で Pod 削除を題材に、固定した release の source、owner、非同期境界、unit/controller test、cluster 観測を一つの evidence chain にする。
+
 進め方:
 
 1. ドキュメントまたは再現テストの修正
@@ -82,6 +86,8 @@
 
 出口条件:
 
+- user-visible な invariant から source と test を逆引きし、tag / commit SHA 付きの読解ノートを作れる。
+- unit test が証明することと、integration test / live observation が必要な仮説を分けられる。
 - 複数の upstream 変更を完了し、他者の変更をレビューできる。
 - project の contribution guide と意思決定過程に沿って提案できる。
 - 自分以外の contributor が成功するためのドキュメントを改善できる。
@@ -90,10 +96,13 @@
 
 [capstone](docs/05-projects/capstone.md) を参照し、狭く重要な問題から始めます。
 
+教材内の実験: [段階別 project](docs/05-projects/README.md) の release evidence packet を使い、同じ artifact と観測 window に対して `Promote / Hold / Rollback` を判定する。少数 sample は成功扱いせず、安全 invariant の違反は sample 数を待たず停止する。
+
 出口条件:
 
 - 明確な problem statement と非目標がある。
 - API compatibility、security、observability、upgrade、backup の方針がある。
+- rollout 前に閾値と復旧操作を固定し、判断結果を test / drill / 観測 link で説明できる。
 - 実利用者から学ぶ公開フィードバックループがある。
 - 1 社・1 人に依存しない maintainer / reviewer の経路がある。
 

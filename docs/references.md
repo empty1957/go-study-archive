@@ -27,9 +27,16 @@
 - [CNCF Projects](https://www.cncf.io/projects/): project と maturity の公式一覧。
 - [CNCF Technical Oversight Committee](https://github.com/cncf/toc): project proposal / maturity process の最新情報を確認する入口。
 - [Kubernetes documentation](https://kubernetes.io/docs/home/): architecture、API、運用。
+- [Kubernetes: Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/): termination flow、signal、grace period、EndpointSlice condition。
+- [Kubernetes: Liveness, Readiness, and Startup Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/): 各 probe の目的、failure の効果、設定項目。
+- [Kubernetes: Pods and Endpoints Termination Flow](https://kubernetes.io/docs/tutorials/services/pods-and-endpoint-termination-flow/): terminating endpoint を観測する公式演習。
+- [Kubernetes: Container Lifecycle Hooks](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/): `preStop` と TERM の順序、grace period との関係。
+- [Kubernetes: Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/): rolling update、availability、progress deadline。
 - [Open Container Initiative Specs](https://github.com/opencontainers): image/runtime/distribution の仕様。
 - [OpenTelemetry specification](https://opentelemetry.io/docs/specs/): telemetry API と data model。
 - [Prometheus documentation](https://prometheus.io/docs/introduction/overview/): metrics と monitoring model。
+- [Google SRE Workbook: Canarying Releases](https://sre.google/workbook/canarying-releases/): 小さな candidate、control、評価 window、判定 automation を使う段階 release。
+- [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/): rolling update、進行状態、revision と rollback の対象範囲。
 - [SLSA specification](https://slsa.dev/spec/): software artifact supply-chain integrity。
 
 ## 読解対象の一次情報
