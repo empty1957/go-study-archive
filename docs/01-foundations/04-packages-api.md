@@ -116,4 +116,4 @@ Task に label を追加すると仮定し、実装前に次を 1 ページへ�
 
 ---
 
-前: [interface と error](03-interfaces-errors.md) | [セクション概要](README.md) | 次: [Go エンジニアリング](../02-engineering/README.md)
+前: [interface と error](03-interfaces-errors.md) | [セクション概要](README.md) | 次: [ファイル置換を commit point で考える](05-atomic-file-replacement.md)

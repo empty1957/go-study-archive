@@ -18,7 +18,7 @@
 
 作るもの: JSON ファイルを読み書きするタスク管理 CLI。
 
-教材内の実験: [基礎セクション](docs/01-foundations/README.md) で Task API の値の所有権、保存 interface、error chain を端から端まで追い、実行可能な例を変更する。
+教材内の実験: [基礎セクション](docs/01-foundations/README.md) で Task API の値の所有権、保存 interface、error chain を端から端まで追う。続いて [file replacement](docs/01-foundations/05-atomic-file-replacement.md) を process の commit point として分解し、中断 test で旧版・新版・temp artifact を観察する。
 
 出口条件:
 
@@ -26,6 +26,7 @@
 - error を値として扱い、`errors.Is/As` で分類できる。
 - consumer 側に小さな interface を定義し、テーブル駆動テストを書ける。
 - mutable な入力を保持・返却する API で、alias と copy cost のどちらを選ぶか説明できる。
+- file 更新の atomicity と durability を区別し、process interruption 前後の invariant を test で示せる。
 
 ## Phase 2: サービス開発（6〜8週）
 

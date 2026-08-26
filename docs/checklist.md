@@ -11,6 +11,8 @@
 - [ ] wrapped error を `errors.Is/As` で分類した。
 - [ ] store の失敗が service の文脈を保ち、transport の応答へ変換される経路を追った。
 - [ ] `io.Reader/Writer` を使って I/O source を交換した。
+- [ ] file replacement の commit point 前後で process を止め、旧版・新版・temp artifact を確認した。
+- [ ] atomicity、durability、concurrent writer の整合性を分け、対象 OS / filesystem で必要な保証を記録した。
 - [ ] table-driven test と fuzz test を書いた。
 
 ## 並行処理

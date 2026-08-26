@@ -18,6 +18,7 @@
 
 JSON file に task を保存する CLI。追加、一覧、完了、削除、import/export を実装します。まず「一時 file を flush してから rename する」失敗経路を test し、書き込み途中の process kill で既存 data を失わないことを示します。
 
+重点: package、I/O、error、[atomic file replacement と中断時の invariant](../01-foundations/05-atomic-file-replacement.md)、table test、CLI contract。
 判断課題: file lock を導入する前に、単一 writer という制約で十分か。複数 process 対応の複雑さと利用者の実需要を比較します。
 
 ## Project B: Task service（Phase 2）

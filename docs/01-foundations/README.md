@@ -8,6 +8,7 @@
   -> package 境界を置く
   -> interface と error で境界の契約を表す
   -> test で契約を固定する
+  -> I/O の commit point と停止時の invariant を固定する
 ```
 
 ## 読む順序
@@ -16,6 +17,7 @@
 2. [言語の核](02-language-core.md)
 3. [interface と error](03-interfaces-errors.md)
 4. [package と API 設計](04-packages-api.md)
+5. [ファイル置換を commit point で考える](05-atomic-file-replacement.md)
 
 各章では同じ問いを一段ずつ具体化します。
 
@@ -24,6 +26,7 @@
 | 値の所有者は誰か | [`Task`](../../internal/task/task.go)、[`MemoryStore`](../../internal/task/store.go) | copy / alias の test |
 | 失敗を誰が判断するか | [`Service`](../../internal/task/service.go)、[HTTP handler](../../internal/task/http.go) | `errors.Is` と status の test |
 | 変更の影響範囲はどこか | `cmd/taskapi -> internal/task` の依存方向 | `go list` と package test |
+| process が途中で止まると何が残るか | [`filereplace.Replace`](../../examples/filereplace/replace.go) | subprocess による中断 test |
 
 ## 進め方
 
@@ -32,4 +35,4 @@
 3. 失敗例へ変更して test が落ちることを確認し、元に戻して理由を書く。
 4. [技能チェックリスト](../checklist.md#go-基礎) に commit または実験ログを残す。
 
-この段階の目標は、「値の所有者は誰か」「失敗を誰が判断するか」「変更の影響範囲はどこか」を、実行結果とコードで説明できることです。
+この段階の目標は、「値の所有者は誰か」「失敗を誰が判断するか」「変更の影響範囲はどこか」に加え、「I/O のどこが commit point で、停止位置ごとに何が残るか」を、実行結果とコードで説明できることです。
