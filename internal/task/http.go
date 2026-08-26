@@ -6,17 +6,23 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"mime"
 	"net/http"
 	"strings"
 	"time"
 )
 
-const maxRequestBody = 16 << 10 // 16 KiB
+const (
+	maxRequestBody     = 16 << 10 // 16 KiB
+	DefaultMaxInFlight = 64
+	retryAfterSeconds  = "1"
+)
 
 type Handler struct {
-	service *Service
-	logger  *slog.Logger
-	ready   func() bool
+	service  *Service
+	logger   *slog.Logger
+	ready    func() bool
+	inFlight chan struct{}
 }
 
 func NewHandler(service *Service, logger *slog.Logger) http.Handler {
@@ -27,20 +33,38 @@ func NewHandler(service *Service, logger *slog.Logger) http.Handler {
 // service before graceful shutdown begins. ready must be safe for concurrent
 // use because each request runs in its own goroutine.
 func NewHandlerWithReadiness(service *Service, logger *slog.Logger, ready func() bool) http.Handler {
+	return NewHandlerWithReadinessAndLimit(service, logger, ready, DefaultMaxInFlight)
+}
+
+// NewHandlerWithReadinessAndLimit bounds the number of API requests admitted
+// to the service at once. Health endpoints bypass the limit so overload remains
+// observable. maxInFlight must be positive.
+func NewHandlerWithReadinessAndLimit(service *Service, logger *slog.Logger, ready func() bool, maxInFlight int) http.Handler {
 	if logger == nil {
 		logger = slog.Default()
 	}
 	if ready == nil {
 		ready = func() bool { return true }
 	}
-	h := &Handler{service: service, logger: logger, ready: ready}
+	if maxInFlight <= 0 {
+		panic("task: maxInFlight must be positive")
+	}
+	h := &Handler{
+		service:  service,
+		logger:   logger,
+		ready:    ready,
+		inFlight: make(chan struct{}, maxInFlight),
+	}
+	api := http.NewServeMux()
+	api.HandleFunc("GET /v1/tasks", h.list)
+	api.HandleFunc("POST /v1/tasks", h.create)
+	api.HandleFunc("GET /v1/tasks/{id}", h.get)
+	api.HandleFunc("DELETE /v1/tasks/{id}", h.delete)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /healthz", h.health)
 	mux.HandleFunc("GET /readyz", h.readiness)
-	mux.HandleFunc("GET /v1/tasks", h.list)
-	mux.HandleFunc("POST /v1/tasks", h.create)
-	mux.HandleFunc("GET /v1/tasks/{id}", h.get)
-	mux.HandleFunc("DELETE /v1/tasks/{id}", h.delete)
+	mux.Handle("/v1/", h.admit(api))
 	return h.accessLog(mux)
 }
 
@@ -73,8 +97,13 @@ func (h *Handler) readiness(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
-	if mediaType := r.Header.Get("Content-Type"); mediaType != "" && !strings.HasPrefix(mediaType, "application/json") {
+	mediaType, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil || mediaType != "application/json" {
 		h.writeError(w, http.StatusUnsupportedMediaType, "unsupported_media_type", "Content-Type must be application/json")
+		return
+	}
+	if r.ContentLength > maxRequestBody {
+		h.writeRequestTooLarge(w)
 		return
 	}
 
@@ -85,10 +114,20 @@ func (h *Handler) create(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&input); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			h.writeRequestTooLarge(w)
+			return
+		}
 		h.writeError(w, http.StatusBadRequest, "invalid_json", "request body must be one valid JSON object")
 		return
 	}
 	if err := ensureJSONEnd(decoder); err != nil {
+		var sizeErr *http.MaxBytesError
+		if errors.As(err, &sizeErr) {
+			h.writeRequestTooLarge(w)
+			return
+		}
 		h.writeError(w, http.StatusBadRequest, "invalid_json", "request body must contain one JSON object")
 		return
 	}
@@ -165,12 +204,29 @@ func (h *Handler) writeError(w http.ResponseWriter, status int, code, message st
 	h.writeJSON(w, status, errorResponse{Code: code, Message: message})
 }
 
+func (h *Handler) writeRequestTooLarge(w http.ResponseWriter) {
+	h.writeError(w, http.StatusRequestEntityTooLarge, "request_too_large", "request body exceeds 16 KiB")
+}
+
 func (h *Handler) writeJSON(w http.ResponseWriter, status int, value any) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(status)
 	if err := json.NewEncoder(w).Encode(value); err != nil {
 		h.logger.Error("encode response", "error", err)
 	}
+}
+
+func (h *Handler) admit(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		select {
+		case h.inFlight <- struct{}{}:
+			defer func() { <-h.inFlight }()
+			next.ServeHTTP(w, r)
+		default:
+			w.Header().Set("Retry-After", retryAfterSeconds)
+			h.writeError(w, http.StatusServiceUnavailable, "overloaded", "service is temporarily overloaded")
+		}
+	})
 }
 
 func (h *Handler) accessLog(next http.Handler) http.Handler {

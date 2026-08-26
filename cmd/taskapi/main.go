@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync/atomic"
 	"syscall"
 	"time"
@@ -17,6 +18,7 @@ import (
 
 const (
 	routingDrainDelayEnv = "TASKAPI_ROUTING_DRAIN_DELAY"
+	maxInFlightEnv       = "TASKAPI_MAX_IN_FLIGHT"
 	shutdownBudget       = 20 * time.Second
 )
 
@@ -33,6 +35,10 @@ func run(logger *slog.Logger) error {
 	if err != nil {
 		return err
 	}
+	maxInFlight, err := positiveIntFromEnv(maxInFlightEnv, task.DefaultMaxInFlight)
+	if err != nil {
+		return err
+	}
 
 	store := &task.MemoryStore{}
 	service := task.NewService(store)
@@ -41,7 +47,7 @@ func run(logger *slog.Logger) error {
 
 	server := &http.Server{
 		Addr:              ":8080",
-		Handler:           task.NewHandlerWithReadiness(service, logger, ready.Load),
+		Handler:           task.NewHandlerWithReadinessAndLimit(service, logger, ready.Load, maxInFlight),
 		ReadHeaderTimeout: 5 * time.Second,
 		ReadTimeout:       10 * time.Second,
 		WriteTimeout:      15 * time.Second,
@@ -60,6 +66,21 @@ func run(logger *slog.Logger) error {
 		logger.Info("waiting for routing propagation", "delay", routingDrainDelay)
 		return waitForDuration(ctx, routingDrainDelay)
 	})
+}
+
+func positiveIntFromEnv(name string, fallback int) (int, error) {
+	raw := os.Getenv(name)
+	if raw == "" {
+		return fallback, nil
+	}
+	value, err := strconv.Atoi(raw)
+	if err != nil {
+		return 0, fmt.Errorf("parse %s: %w", name, err)
+	}
+	if value <= 0 {
+		return 0, fmt.Errorf("parse %s: value must be positive", name)
+	}
+	return value, nil
 }
 
 type managedServer interface {

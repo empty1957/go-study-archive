@@ -34,7 +34,7 @@
 
 作るもの: このリポジトリの Task API を永続化し、認証とページングを追加する。
 
-教材内の実験: [Go エンジニアリング](docs/02-engineering/README.md)で bounded pipeline と HTTP server に共通する owner → cancel → join → error 回収の経路を追い、shutdown 中の readiness と in-flight work を test する。
+教材内の実験: [Go エンジニアリング](docs/02-engineering/README.md)で、HTTP request を入力 byte と同時処理枠の予算内だけで受理し、capacity 超過を処理開始前の `503` として event test で固定する。続いて bounded pipeline と HTTP server に共通する owner → cancel → join → error 回収の経路を追い、shutdown 中の readiness と in-flight work を test する。
 
 出口条件:
 
@@ -42,6 +42,8 @@
 - `go test -race ./...` が通る。
 - readiness と liveness の違いを実装で示せる。
 - 正常系・不正入力・競合・キャンセルをテストできる。
+- body size、同時処理数、queue、retry の予算を定義し、`400 / 413 / 415 / 503` の違いを caller の修復操作として説明できる。
+- overload 時に新規 work を開始せず、health endpoint と既存 in-flight work が進むことを event test で示せる。
 - goroutine ごとの owner、cancel、join、error path を図と実行結果で説明できる。
 
 ## Phase 3: Production engineering（8〜12週）

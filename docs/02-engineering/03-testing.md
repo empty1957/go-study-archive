@@ -78,6 +78,14 @@ cancel
 
 [`examples/pipeline/pipeline_test.go`](../../examples/pipeline/pipeline_test.go) では callback が cancel を観測した event と、全 worker の join 後に output が閉じた event を別々に検証します。`go test -race` はこの順序の test を補完しますが、goroutine leak や論理的な順序違反をすべて検出するものではありません。
 
+## resource 境界は event で固定する
+
+overload test でも大量 goroutine と `time.Sleep` だけで saturation を推測しません。[`TestHandlerRejectsOverloadBeforeStartingWork`](../../internal/task/http_test.go) は capacity 1 の handler と blocking store を組み合わせ、1 件目が store に到達した event を受けてから 2 件目を送ります。これにより `503` が「たまたま遅かった」結果ではなく、枠が埋まった時点で service work を開始しない契約だと検証できます。
+
+body limit は `Content-Length` が分かる request と、長さが未知の streaming 相当を分けます。前者だけの test では header の早期判定しか通らず、[`http.MaxBytesReader`](https://pkg.go.dev/net/http#MaxBytesReader) が実際の read を止める経路を証明できません。status だけでなく安定した error code、`Retry-After`、枠解放後の再受付、health endpoint が枠外であることも observable contract として比較します。
+
+timeout は deadlock 時に suite を終わらせる guard に限定し、成功の同期には channel event を使います。test が途中で失敗しても blocking goroutine を解放する cleanup を登録し、test 自身の leak を防ぎます。[HTTP service の境界契約](02-http-service.md#実行可能な契約テスト)の時系列と対応させてください。
+
 ## 良い coverage の問い
 
 coverage 80% は目的ではありません。次を確認します。

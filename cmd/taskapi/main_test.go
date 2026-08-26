@@ -165,6 +165,32 @@ func TestDurationFromEnv(t *testing.T) {
 	}
 }
 
+func TestPositiveIntFromEnv(t *testing.T) {
+	const name = "TASKAPI_TEST_POSITIVE_INT"
+	t.Run("fallback", func(t *testing.T) {
+		t.Setenv(name, "")
+		got, err := positiveIntFromEnv(name, 64)
+		if err != nil || got != 64 {
+			t.Fatalf("positiveIntFromEnv() = %d, %v; want 64, nil", got, err)
+		}
+	})
+	t.Run("configured", func(t *testing.T) {
+		t.Setenv(name, "8")
+		got, err := positiveIntFromEnv(name, 64)
+		if err != nil || got != 8 {
+			t.Fatalf("positiveIntFromEnv() = %d, %v; want 8, nil", got, err)
+		}
+	})
+	for _, value := range []string{"many", "0", "-1"} {
+		t.Run("reject_"+value, func(t *testing.T) {
+			t.Setenv(name, value)
+			if _, err := positiveIntFromEnv(name, 64); err == nil {
+				t.Fatalf("positiveIntFromEnv() accepted %q", value)
+			}
+		})
+	}
+}
+
 type fakeServer struct {
 	serveDone chan struct{}
 	serveErr  error

@@ -35,7 +35,10 @@ service では `net/http/pprof` を管理 network に限定して公開します
 - benchmark 中に compiler が結果を除去する。
 - laptop の 1 回の数値だけで結論を出す。
 
-## capacity の考え方
+## capacity は拒否を含めて検証する
 
-Little's Law の直感 `concurrency ≈ throughput × latency` は、同時実行数・queue の見積もりに役立ちます。ただし burst、分布、retry、downstream limit がある実システムでは負荷試験で検証します。saturation 前に admission control と backpressure が働く設計にします。
+Little's Law の直感 `concurrency ≈ throughput × latency` は、同時実行数・queue の見積もりに役立ちます。ただし burst、処理時間の分布、retry、downstream limit がある実システムでは負荷試験で検証します。saturation 前に admission control と backpressure が働く設計にします。
 
+Task API では `TASKAPI_MAX_IN_FLIGHT` を段階的に増やし、成功 request だけでなく `503 / overloaded`、in-flight 数、p95/p99、CPU、memory、下流待機を同時に記録します。上限を増やして throughput が伸びず tail latency だけが悪化するなら、queue を深くする理由にはなりません。reject 率 0 だけを目標にすると、障害時の待機と resource 枯渇を隠します。
+
+[HTTP service の境界契約](02-http-service.md#capacity-予算-queue-を作る前に拒否する)で現在の queue 長 0 の実装、health/readiness との分離、caller retry の条件を確認してから計測してください。

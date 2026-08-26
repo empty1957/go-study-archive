@@ -44,6 +44,8 @@
 | fencing token | 古い lease holder の書き込みを storage 側で拒否する単調増加 token。 |
 | WAL | durable state の前に追記する write-ahead log。crash recovery に用いる。 |
 | backpressure | consumer の処理能力に合わせて producer を抑制・拒否する仕組み。 |
+| admission control | resource を割り当てる前に、新しい仕事を受理できるか判定する境界。queue へ無条件に積む方式と異なり、overload を明示的に拒否できる。 |
+| load shedding | capacity を超えた仕事を早期に拒否し、受理済み work と process の回復余地を守ること。どの request を拒否するかは fairness と優先度の契約でもある。 |
 | circuit breaker | 失敗中の依存先への呼び出しを一時遮断し、連鎖障害を抑える状態機械。 |
 | retry budget | retry が通常 traffic や依存先を圧迫しないように設ける上限。 |
 | thundering herd | 同じ event を契機に多数の処理が一斉起動し、resource を圧迫する現象。jitter が緩和に有効。 |
