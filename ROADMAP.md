@@ -64,10 +64,13 @@
 
 作るもの: 複数ノードのジョブスケジューラ、または宣言的 controller。
 
+教材内の実験: [retry の判定契約](docs/03-cloud-native/02-distributed-systems.md#retry-を一つの判定契約にする)で response loss を「未適用」と誤認しない条件を整理し、replay safety、`Retry-After`、full jitter、total deadline、共有 retry budget を一つの planner と failure injection で検証する。
+
 出口条件:
 
 - ネットワーク分断、重複配送、時計のずれ、部分障害をテストで注入できる。
 - at-most-once / at-least-once の選択と、利用者への影響を説明できる。
+- retry owner を一層に定め、logical operation に対する attempt 増幅率と shared budget 枯渇を観測できる。
 - reconcile loop が収束する条件と、処理の冪等性を説明できる。
 
 ## Phase 5: OSS contribution（並行して継続）

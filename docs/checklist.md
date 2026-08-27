@@ -42,7 +42,10 @@
 
 ## 分散システム
 
-- [ ] retry 可能性と idempotency key を設計した。
+- [ ] response loss 後も replay-safe である根拠を、HTTP method 名だけでなく durable な idempotency key / deduplication または照合手順で示した。
+- [ ] retry owner を一層にし、初回を含む attempt 上限、total deadline、`Retry-After`、jitter を境界値で test した。
+- [ ] shared retry budget を枯渇させ、通常 traffic を守りながら追加 attempt が止まることを観測した。
+- [ ] logical operation と全 attempt を別々に数え、retry 増幅率と budget 枯渇を bounded label で可視化した。
 - [ ] stale lease holder を fencing token で拒否した。
 - [ ] response loss と重複 delivery を注入した。
 - [ ] network partition 中の consistency/availability 選択を説明した。

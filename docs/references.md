@@ -1,6 +1,6 @@
 # 参考資料
 
-変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-20）。
+変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-27）。
 
 ## Go
 
@@ -24,6 +24,10 @@
 
 ## Cloud native / CNCF
 
+- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html): idempotent method と自動 retry、`Retry-After` の標準上の意味。
+- [RFC 6585: Additional HTTP Status Codes](https://www.rfc-editor.org/rfc/rfc6585.html): `429 Too Many Requests` と optional な `Retry-After`。
+- [Google SRE: Addressing Cascading Failures](https://sre.google/sre-book/addressing-cascading-failures/): overload、retry の多層増幅、server-wide retry budget。
+- [Amazon Builders' Library: Timeouts, retries, and backoff with jitter](https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter): timeout 選定、retry owner、backoff、jitter の実務上の判断。
 - [CNCF Projects](https://www.cncf.io/projects/): project と maturity の公式一覧。
 - [CNCF Technical Oversight Committee](https://github.com/cncf/toc): project proposal / maturity process の最新情報を確認する入口。
 - [Kubernetes documentation](https://kubernetes.io/docs/home/): architecture、API、運用。
