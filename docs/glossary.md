@@ -36,6 +36,7 @@
 | 用語 | 意味 |
 |---|---|
 | idempotency（冪等性） | 同じ操作を複数回適用しても、1 回と同じ最終状態になる性質。retry 安全性の中心。 |
+| idempotency key | logical operation を識別し、同じ key の再送へ保存済み結果を返すための値。key と payload / result の対応を durable に保持し、保存期間と conflict を契約化して初めて response loss に耐える。 |
 | linearizability | 各操作が呼び出しと応答の間の一点で原子的に起きたように見える強い整合性。 |
 | eventual consistency | 更新が止まれば replica が最終的に同じ値へ収束するモデル。いつ・どう収束するかの定義が必要。 |
 | consensus | 障害がある複数 node が値や log の順序に合意する問題。Raft は代表的 algorithm。 |
@@ -45,7 +46,8 @@
 | WAL | durable state の前に追記する write-ahead log。crash recovery に用いる。 |
 | backpressure | consumer の処理能力に合わせて producer を抑制・拒否する仕組み。 |
 | circuit breaker | 失敗中の依存先への呼び出しを一時遮断し、連鎖障害を抑える状態機械。 |
-| retry budget | retry が通常 traffic や依存先を圧迫しないように設ける上限。 |
+| retry budget | retry が通常 traffic や依存先を圧迫しないよう、process / tenant / dependency 等で共有する追加 attempt の上限。request ごとの回数上限だけでは一斉 failure 時の総量を抑えられない。 |
+| retry amplification | logical operation 数に対して、retry / hedge を含む実 attempt 数がどれだけ増えたかを表す比率。多層 retry では各層の attempt 数が掛け算になる。 |
 | thundering herd | 同じ event を契機に多数の処理が一斉起動し、resource を圧迫する現象。jitter が緩和に有効。 |
 | reconciliation | desired state と observed state の差を繰り返し埋め、収束させる処理。controller の基本。 |
 | at-least-once | message を失わない代わりに重複し得る配送。consumer の冪等性が必要。 |

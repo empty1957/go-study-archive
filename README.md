@@ -20,7 +20,7 @@ Go を初めて学ぶところから、世界中で長期運用されるクラ�
 |---|---|---|
 | [基礎](docs/01-foundations/README.md) | ツール、型、関数、interface、error、モジュール | 小さな関数とテーブル駆動テスト |
 | [Go エンジニアリング](docs/02-engineering/README.md) | 並行処理、HTTP、テスト、設計、性能 | in-memory Task API |
-| [クラウドネイティブ](docs/03-cloud-native/README.md) | コンテナ、Kubernetes、分散システム、可観測性、セキュリティ | production 化チェックリスト |
+| [クラウドネイティブ](docs/03-cloud-native/README.md) | コンテナ、Kubernetes、分散システム、可観測性、セキュリティ | shutdown timeline と retry 判定契約 |
 | [OSS コードリーディング](docs/04-repository-guides/README.md) | Kubernetes、containerd、Prometheus、etcd | 読解ノートと小さな contribution |
 | [プロジェクト](docs/05-projects/README.md) | 段階別演習と capstone | ローカルツールから分散コントロールプレーンへ |
 | [用語集](docs/glossary.md) | Go / 分散システム / CNCF の重要語 | 復習用インデックス |

@@ -35,7 +35,7 @@ control loop は process 内の transaction や goroutine を知りません。K
 - readiness を起動中・一時的な処理不能・明示的な drain に対応させ、liveness と混同しない。
 - resource request / limit を計測に基づき設定し、overload 時は無制限に queue しない。
 - replica 間で local disk / memory state を共有できる、または Pod IP や起動順序が永続 identity になると仮定しない。
-- disruption、reschedule、response loss、duplicate execution に耐える。side effect は [冪等性と retry](02-distributed-systems.md#retry-の設計)まで含めて設計する。
+- disruption、reschedule、response loss、duplicate execution に耐える。side effect は [retry の判定契約](02-distributed-systems.md#retry-を一つの判定契約にする)まで含めて設計する。
 
 ## Pod 削除で並行して起きること
 

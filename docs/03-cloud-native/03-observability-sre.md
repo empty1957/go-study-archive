@@ -31,6 +31,14 @@ minimum dashboard:
 - dependency latency / error / retry。
 - build version と rollout marker。
 
+## retry を観測する
+
+[分散システムの retry 契約](02-distributed-systems.md#retry-を一つの判定契約にする)は、成功/失敗の二値だけでは運用できません。logical operation と network attempt を別々に数え、`attempts / operations` を dependency ごとの増幅率として表示します。初回成功率が同じでも増幅率が上がれば、利用者影響より前に dependency capacity を消費しています。
+
+dashboard では failure kind、retry decision、shared budget 枯渇、backoff、total deadline、dedup hit を同じ時間軸へ置きます。alert は個々の retry 発生ではなく、増幅率と dependency error の同時上昇、budget 枯渇の継続、SLO burn への接続で判断します。incident 時には retry を成功率の回復策だけでなく、overload を維持する正の feedback かもしれないと疑います。
+
+`operation_id`、`idempotency_key`、attempt 番号は trace / structured log で因果を追うために使います。metric には raw ID を入れず、bounded な operation、dependency、failure kind、decision を使います。
+
 ## termination を観測する
 
 graceful shutdown は「error が出なかった」だけでは検証できません。[Pod の終了契約](01-containers-kubernetes.md#pod-削除で並行して起きること)に沿って、少なくとも次を同じ rollout timeline へ載せます。
