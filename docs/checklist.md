@@ -64,6 +64,9 @@
 - [ ] 読んだ source の release tag と commit SHA を記録し、後日同じ根拠を再現できる。
 - [ ] 複数 process の処理を直列 call graph にせず、owner・watch/queue・state transition を図示した。
 - [ ] unit / controller / integration / live の各 evidence が証明しない範囲を説明した。
+- [ ] Prometheus の `up=0`、stale marker、target 自体の不在を timeline と query で区別した。
+- [ ] metric の label 直積と target 数から上限を見積もり、per-scrape と TSDB Head の両方へ予算を置いた。
+- [ ] current Head series と created / removed rate を併記し、series 増加と label churn を区別した。
 - [ ] upstream に再現 test または小さな修正を contribution した。
 - [ ] 他者の PR を建設的に review した。
 - [ ] governance、role、promotion、conflict process を公開した。

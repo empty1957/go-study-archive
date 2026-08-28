@@ -63,6 +63,9 @@
 | RED | Rate、Errors、Duration を service ごとに見る監視方法。 |
 | USE | Utilization、Saturation、Errors を resource ごとに見る監視方法。 |
 | cardinality | metric label の組み合わせ数。無制限な user ID 等は TSDB の負荷を急増させる。 |
+| stale marker | Prometheus が時系列の終了を表すため内部的に書く特殊な sample。値 0 ではなく、marker より後の query 結果から series を外す。明示 timestamp や target 削除では書かれる条件・時刻が異なる。 |
+| series churn | active series の総数が同程度でも、変化する label value により series の生成と削除が高頻度に続く状態。Head の現在値だけでなく created / removed rate で観測する。 |
+| sample limit | Prometheus が metric relabel 後の1回の scrape で受け入れる sample 数の上限。超過分だけをdropする仕組みではなく、scrape 全体を失敗扱いにする最後の防壁。 |
 | graceful shutdown | 新規 traffic を止め、有限 deadline 内で in-flight work を完了させてから終了する手順。deadline 超過時の強制終了方針も必要。 |
 | canary release | 変更を production の一部へ時間限定で公開し、candidate と control の signal から全体 rollout の可否を判断する手法。少数 sample の成功だけでは promote しない。 |
 | release gate | artifact、前提条件、観測 window、閾値を入力に、promote / hold / rollback など次の操作を決める判定契約。閾値は観測後に都合よく変えない。 |
