@@ -1,6 +1,6 @@
 # 参考資料
 
-変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-20）。
+変化し得る仕様・要件は、blog の要約ではなく一次情報を確認します（確認日: 2026-08-28）。
 
 ## Go
 
@@ -35,6 +35,9 @@
 - [Open Container Initiative Specs](https://github.com/opencontainers): image/runtime/distribution の仕様。
 - [OpenTelemetry specification](https://opentelemetry.io/docs/specs/): telemetry API と data model。
 - [Prometheus documentation](https://prometheus.io/docs/introduction/overview/): metrics と monitoring model。
+- [Prometheus configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/): scrape timeout、body / sample / label limit と metric relabel の契約。
+- [Prometheus query basics: Staleness](https://prometheus.io/docs/prometheus/latest/querying/basics/#staleness): lookback と stale marker が query 結果へ与える影響。
+- [Prometheus instrumentation: Do not overuse labels](https://prometheus.io/docs/practices/instrumentation/#do-not-overuse-labels): label cardinality を bounded な集合として設計する判断基準。
 - [Google SRE Workbook: Canarying Releases](https://sre.google/workbook/canarying-releases/): 小さな candidate、control、評価 window、判定 automation を使う段階 release。
 - [Kubernetes Deployments](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/): rolling update、進行状態、revision と rollback の対象範囲。
 - [SLSA specification](https://slsa.dev/spec/): software artifact supply-chain integrity。

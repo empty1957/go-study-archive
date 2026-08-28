@@ -6,12 +6,12 @@
 |---|---|---|
 | [Kubernetes](https://github.com/kubernetes/kubernetes) | 巨大 codebase、宣言的 API、controller、compatibility | [kubernetes.md](kubernetes.md) |
 | [containerd](https://github.com/containerd/containerd) | daemon、gRPC、plugin、runtime boundary | [containerd.md](containerd.md) |
-| [Prometheus](https://github.com/prometheus/prometheus) | ingestion、query、TSDB、operability | [prometheus.md](prometheus.md) |
+| [Prometheus](https://github.com/prometheus/prometheus) | scrape transaction、staleness、cardinality budget、TSDB | [prometheus.md](prometheus.md) |
 | [etcd](https://github.com/etcd-io/etcd) | consensus、WAL、state machine、robustness | [etcd.md](etcd.md) |
 
 ## このセクションの進め方
 
-最初の題材は [Kubernetes の Pod 削除と EndpointSlice](kubernetes.md)です。1つの user-visible な状態変化を、API owner、controller、node agent、pure function、test、実測へ分解する型を身につけてから、containerd、Prometheus、etcd へ横展開します。
+最初の題材は [Kubernetes の Pod 削除と EndpointSlice](kubernetes.md)です。1つの user-visible な状態変化を、API owner、controller、node agent、pure function、test、実測へ分解する型を身につけます。次に [Prometheus の scrape 診断](prometheus.md)で、同じ型を transaction、stale marker、query、resource budget へ横展開してから、containerd と etcd へ進みます。
 
 読む量ではなく、次の evidence chain を完成させることを目標にします。
 
